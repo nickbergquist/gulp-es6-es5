@@ -7,6 +7,7 @@ const gulp = require('gulp');
 const babel = require('gulp-babel');
 const eslint = require('gulp-eslint');
 const sourcemaps = require('gulp-sourcemaps');
+const uglify = require('gulp-uglify');
 const del = require('del');
 
 
@@ -14,7 +15,8 @@ const del = require('del');
  * PATHS
  */
 const paths = {
-    srcJs: './src/js/**/*.js',
+    //srcJs: './src/js/**/*.js',
+    srcJs: './src/js/test2.js',
     dirBuild: './build/'
 };
 
@@ -22,8 +24,7 @@ const paths = {
 /**
  * JAVASCRIPT
  */
-gulp.task('transpile-js', () => {
-    // let gulp know this is an asynchronous event by returning
+gulp.task('dev-transpile-js', () => {
     return gulp.src(paths.srcJs) 
         .pipe(sourcemaps.init())
         .pipe(babel({
@@ -36,7 +37,17 @@ gulp.task('transpile-js', () => {
 gulp.task('lint-js', () => {
     return gulp.src([paths.srcJs])
         .pipe(eslint())
-        .pipe(eslint.format());
+        .pipe(eslint.format())
+        //.pipe(eslint.failOnError());
+});
+
+gulp.task('pub-build-js', () => {
+    return gulp.src(paths.srcJs) 
+        .pipe(babel({
+            presets: ['es2015']
+        }))
+        .pipe(uglify())
+        .pipe(gulp.dest(paths.dirBuild));
 });
 
 
@@ -45,7 +56,7 @@ gulp.task('lint-js', () => {
  */
 // remove all processed assets
 gulp.task('clean', () => {
-    del([paths.dirBuild]);
+    del(paths.dirBuild + '*');
 });
 
 
@@ -53,11 +64,12 @@ gulp.task('clean', () => {
  * WATCH TASKS
  */
 gulp.task('watch', () => {
-	gulp.watch(paths.srcJs, ['lint-js', 'transpile-js']);
+	gulp.watch(paths.srcJs, ['dev-build']);
 });
 
 /**
  * MAIN TASKS
  */
 gulp.task('default', ['dev-build', 'watch']);
-gulp.task('dev-build', ['lint-js', 'transpile-js']);
+gulp.task('dev-build', ['clean', 'lint-js', 'dev-transpile-js']);
+gulp.task('pub-build', ['clean', 'pub-build-js']);
