@@ -16,7 +16,7 @@ const del = require('del');
  */
 const paths = {
     //srcJs: './src/js/**/*.js',
-    srcJs: './src/js/test2.js',
+    srcJs: './src/js/Test2.js',
     dirBuild: './build/'
 };
 
@@ -37,8 +37,8 @@ gulp.task('dev-transpile-js', () => {
 gulp.task('lint-js', () => {
     return gulp.src([paths.srcJs])
         .pipe(eslint())
-        .pipe(eslint.format())
-        //.pipe(eslint.failOnError());
+        .pipe(eslint.format());
+    //.pipe(eslint.failOnError());
 });
 
 gulp.task('pub-build-js', () => {
@@ -64,7 +64,7 @@ gulp.task('clean', () => {
  * WATCH TASKS
  */
 gulp.task('watch', () => {
-	gulp.watch(paths.srcJs, ['dev-build']);
+    gulp.watch(paths.srcJs, ['dev-build']);
 });
 
 /**
